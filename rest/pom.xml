@@ -47,7 +47,7 @@
         <!-- Common Module (DTOs) -->
         <dependency>
             <groupId>com.wit</groupId>
-            <artifactId>calculator-backend-challenge</artifactId>
+            <artifactId>common</artifactId>
             <version>1.0.0</version>
         </dependency>
 

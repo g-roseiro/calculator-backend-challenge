@@ -1,18 +1,16 @@
 package com.wit.common.dto;
 
-import java.math.BigDecimal;
-
 public class CalculatorResponse {
-    private BigDecimal result;
+    private String result;
     private String error;
 
-    public CalculatorResponse(BigDecimal result, String error) {
+    public CalculatorResponse(String result, String error) {
         this.result = result;
         this.error = error;
     }
 
     // Getters
-    public BigDecimal getResult() {
+    public String getResult() {
         return this.result;
     }
 
@@ -21,7 +19,7 @@ public class CalculatorResponse {
     }
 
     // Setters
-    public void setResult(BigDecimal result) {
+    public void setResult(String result) {
         this.result = result;
     }
 
