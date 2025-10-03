@@ -5,11 +5,13 @@ import com.wit.calculator.operation.type.MultiplicationOperation;
 import com.wit.calculator.operation.type.SubtractionOperation;
 import com.wit.calculator.operation.type.SumOperation;
 import com.wit.common.dto.OperationType;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+@Component
 public class OperationFactory {
-    public static IOperation createOperation(OperationType operationType, BigDecimal operandA, BigDecimal operandB) {
+    public IOperation createOperation(OperationType operationType, BigDecimal operandA, BigDecimal operandB) {
         return switch (operationType) {
             case SUM -> new SumOperation(operandA, operandB);
             case SUBTRACTION -> new SubtractionOperation(operandA, operandB);
