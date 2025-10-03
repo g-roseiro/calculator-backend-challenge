@@ -1,6 +1,6 @@
 package com.wit.common.dto;
 
-public enum Operation {
+public enum OperationType {
     SUM,
     SUBTRACTION,
     MULTIPLICATION,

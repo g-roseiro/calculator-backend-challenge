@@ -3,19 +3,19 @@ package com.wit.common.dto;
 import java.math.BigDecimal;
 
 public class CalculatorRequest {
-    private Operation operation;
+    private OperationType operationType;
     private BigDecimal a;
     private BigDecimal b;
 
-    public CalculatorRequest(Operation operation, BigDecimal a, BigDecimal b) {
-        this.operation = operation;
+    public CalculatorRequest(OperationType operationType, BigDecimal a, BigDecimal b) {
+        this.operationType = operationType;
         this.a = a;
         this.b = b;
     }
 
     // Getters
-    public Operation getOperation() {
-        return this.operation;
+    public OperationType getOperation() {
+        return this.operationType;
     }
 
     public BigDecimal getA() {
@@ -27,8 +27,8 @@ public class CalculatorRequest {
     }
 
     // Setters
-    public void setOperation(Operation operation) {
-        this.operation = operation;
+    public void setOperation(OperationType operationType) {
+        this.operationType = operationType;
     }
 
     public void setA(BigDecimal a) {
