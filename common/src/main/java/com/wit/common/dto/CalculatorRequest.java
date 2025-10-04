@@ -13,6 +13,10 @@ public class CalculatorRequest {
         this.b = b;
     }
 
+    // Beacause of Jackson Deserializationå
+    public CalculatorRequest() {
+    }
+
     // Getters
     public OperationType getOperation() {
         return this.operationType;

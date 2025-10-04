@@ -9,6 +9,10 @@ public class CalculatorResponse {
         this.error = error;
     }
 
+    // Because of Jackson deserialization
+    public CalculatorResponse() {
+    }
+
     // Getters
     public String getResult() {
         return this.result;
