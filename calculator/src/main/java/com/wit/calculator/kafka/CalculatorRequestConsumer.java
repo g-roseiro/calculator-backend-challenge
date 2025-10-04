@@ -18,7 +18,7 @@ public class CalculatorRequestConsumer {
         this.responseProducer = responseProducer;
     }
 
-    @KafkaListener(topics = KafkaTopics.CALCULATOR_REQUESTS, groupId = "calculator-group")
+    @KafkaListener(topics = KafkaTopics.CALCULATOR_REQUESTS, groupId = "${spring.kafka.consumer.group-id}")
     public void consume(CalculatorRequest request) {
         CalculatorResponse response = this.calculatorService.calculate(request);
         responseProducer.send(response);
