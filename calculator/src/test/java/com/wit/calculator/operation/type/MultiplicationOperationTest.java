@@ -55,7 +55,7 @@ public class MultiplicationOperationTest {
                 new BigDecimal("2.2")
         );
         BigDecimal result = operation.solve();
-        assertEquals(new BigDecimal("3.30"), result.stripTrailingZeros());
+        assertEquals(0, result.compareTo(new BigDecimal("3.30")));
     }
 
     @Test

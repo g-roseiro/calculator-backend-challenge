@@ -65,7 +65,7 @@ public class SumOperationTest {
                 new BigDecimal("2.75")
         );
         BigDecimal result = operation.solve();
-        assertEquals(new BigDecimal("4.00"), result.stripTrailingZeros());
+        assertEquals(0, result.compareTo(new BigDecimal("4.00")));
     }
 
     @Test

@@ -64,7 +64,7 @@ public class SubtractionOperationTest {
                 new BigDecimal("2.25")
         );
         BigDecimal result = operation.solve();
-        assertEquals(new BigDecimal("3.50"), result.stripTrailingZeros());
+        assertEquals(0, result.compareTo(new BigDecimal("3.50")));
     }
 
     @Test
