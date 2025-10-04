@@ -2,7 +2,8 @@ package com.wit.calculator.service;
 
 import com.wit.calculator.operation.IOperation;
 import com.wit.calculator.operation.OperationFactory;
-import com.wit.common.dto.OperationType;
+import com.wit.common.dto.CalculatorRequest;
+import com.wit.common.dto.CalculatorResponse;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,8 +17,9 @@ public class CalculatorService {
         this.operationFactory = operationFactory;
     }
 
-    public BigDecimal calculate(OperationType operationType, BigDecimal operandA, BigDecimal operandB) {
-        IOperation operation = this.operationFactory.createOperation(operationType, operandA, operandB);
-        return operation.solve();
+    public CalculatorResponse calculate(CalculatorRequest request) {
+        IOperation operation = this.operationFactory.createOperation(request);
+        BigDecimal result = operation.solve();
+        return new CalculatorResponse(result.toPlainString(), null);
     }
 }
