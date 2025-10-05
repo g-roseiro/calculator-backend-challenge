@@ -14,6 +14,7 @@ public class SwaggerConfig {
                 .info(new Info()
                     .title("WIT - Calculator REST API challenge")
                     .version("1.0.0")
-                    .description("REST API for sum, subtraction, multiplication and division of two operands."));
+                    .description("REST API for sum, subtraction, multiplication and division of two operands.")
+                );
     }
 }

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +18,13 @@ import com.wit.common.dto.CalculatorRequest;
 import com.wit.common.dto.CalculatorResponse;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
-// /swagger-ui.html documentation included
+import org.slf4j.Logger;
+
 @RestController
 public class CalculatorRestController {
 
+    private static final Logger log = LoggerFactory.getLogger(CalculatorRestController.class);
     private final CalculatorRestService calculatorRestService;
 
     public CalculatorRestController(CalculatorRestService calculatorRestService) {
@@ -56,6 +58,8 @@ public class CalculatorRestController {
             @Parameter(description = "First operand") @RequestParam("a") BigDecimal a,
             @Parameter(description = "Second operand") @RequestParam("b") BigDecimal b) throws InterruptedException {
 
+        log.info("Received request: /sum with a={}, b={}", a, b);
+
         CalculatorRequest request = new CalculatorRequest(OperationType.SUM, a, b);
         return handleOperation(request);
     }
@@ -86,6 +90,8 @@ public class CalculatorRestController {
     public ResponseEntity<CalculatorResponse> subtraction(
             @Parameter(description = "First operand") @RequestParam("a") BigDecimal a,
             @Parameter(description = "Second operand") @RequestParam("b") BigDecimal b) throws InterruptedException {
+
+        log.info("Received request: /subtraction with a={}, b={}", a, b);
 
         CalculatorRequest request = new CalculatorRequest(OperationType.SUBTRACTION, a, b);
         return handleOperation(request);
@@ -118,6 +124,8 @@ public class CalculatorRestController {
             @Parameter(description = "First operand") @RequestParam("a") BigDecimal a,
             @Parameter(description = "Second operand") @RequestParam("b") BigDecimal b) throws InterruptedException {
 
+        log.info("Received request: /multiplication with a={}, b={}", a, b);
+
         CalculatorRequest request = new CalculatorRequest(OperationType.MULTIPLICATION, a, b);
         return handleOperation(request);
     }
@@ -149,17 +157,30 @@ public class CalculatorRestController {
             @Parameter(description = "First operand") @RequestParam("a") BigDecimal a,
             @Parameter(description = "Second operand") @RequestParam("b") BigDecimal b) throws InterruptedException {
 
+        log.info("Received request: /division with a={}, b={}", a, b);
+
         CalculatorRequest request = new CalculatorRequest(OperationType.DIVISION, a, b);
         return handleOperation(request);
     }
 
     private ResponseEntity<CalculatorResponse> handleOperation(CalculatorRequest request) throws InterruptedException {
+        log.debug("Handling operation: {}", request.getOperation());
+
         CalculatorResponse response = calculatorRestService.calculate(request);
+
         if (response == null) {
+            log.error("No response received from calculator service for operation {}", request.getOperation());
             return ResponseEntity
                     .status(HttpStatus.GATEWAY_TIMEOUT)
                     .body(new CalculatorResponse(null, "No response received from calculator service."));
         }
+
+        if (response.getError() != null) {
+            log.warn("Operation {} completed with error: {}", request.getOperation(), response.getError());
+        } else {
+            log.info("Operation {} completed successfully. Result={}", request.getOperation(), response.getResult());
+        }
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);

@@ -19,7 +19,11 @@ public class CalculatorService {
 
     public CalculatorResponse calculate(CalculatorRequest request) {
         IOperation operation = this.operationFactory.createOperation(request);
-        BigDecimal result = operation.solve();
-        return new CalculatorResponse(result.toPlainString(), null);
+        try {
+            BigDecimal result = operation.solve();
+            return new CalculatorResponse(result.toPlainString(), null);
+        } catch (ArithmeticException e) {
+            return new CalculatorResponse(null, e.getMessage());
+        }
     }
 }
