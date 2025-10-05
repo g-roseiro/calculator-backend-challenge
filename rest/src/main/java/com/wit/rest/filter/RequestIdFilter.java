@@ -1,43 +1,48 @@
 package com.wit.rest.filter;
 
-import jakarta.servlet.*;
+import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.MDC; // Mapped Diagnostic Context
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.UUID;
 
-// Intercepts the Http Request to give him a UUID before reaches the controller layer
+/**
+ * Intercepts every HTTP request before it reaches the Controller layer.
+ * Generates or retrieves a unique Request ID, stores it in the MDC for logging,
+ * and attaches it to the HTTP response header (X-Request-ID).
+ */
 @Component
-public class RequestIdFilter implements Filter {
+@Order(1) // FIlter order on chain
+public class RequestIdFilter extends OncePerRequestFilter {
 
     // Name of the HTTP header that will carry the unique request identifier
-    // When the filter runs: httpResponse.addHeader("X-Request-ID", requestId);
     private static final String REQUEST_ID_HEADER = "X-Request-ID";
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, jakarta.servlet.ServletException {
 
-        // Cast the generic request/response to HTTP-specific objects
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        // Try to read an existing Request ID from incoming headers
+        String requestId = request.getHeader(REQUEST_ID_HEADER);
 
-        String requestId = httpRequest.getHeader(REQUEST_ID_HEADER);
-
-        // If no request ID exists, generate a new one
+        // If not provided by the client, generate a new one
         if (requestId == null || requestId.isEmpty()) {
             requestId = UUID.randomUUID().toString();
         }
 
-        MDC.put("requestId", requestId); // // Store the requestId in Mapped Diagnostic Context (MDC)
+        // Store the Request ID in the MDC (Mapped Diagnostic Context)
+        MDC.put("requestId", requestId);
+        // Attach the Request ID to the HTTP response header
+        response.setHeader(REQUEST_ID_HEADER, requestId);
 
         try {
-            // normal filter chain flow (pass control to the next filter or controller)
-            chain.doFilter(request, response);
+            // Continue the normal filter chain (go to next filter or controller layer)
+            filterChain.doFilter(request, response);
         } finally {
-            httpResponse.addHeader(REQUEST_ID_HEADER, requestId);
             MDC.clear();
         }
     }
