@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,7 +61,8 @@ public class CalculatorRestController {
 
         log.info("Received request: /sum with a={}, b={}", a, b);
 
-        CalculatorRequest request = new CalculatorRequest(OperationType.SUM, a, b);
+        String requestId = MDC.get("requestId");
+        CalculatorRequest request = new CalculatorRequest(requestId, OperationType.SUM, a, b);
         return handleOperation(request);
     }
 
@@ -93,7 +95,8 @@ public class CalculatorRestController {
 
         log.info("Received request: /subtraction with a={}, b={}", a, b);
 
-        CalculatorRequest request = new CalculatorRequest(OperationType.SUBTRACTION, a, b);
+        String requestId = MDC.get("requestId");
+        CalculatorRequest request = new CalculatorRequest(requestId, OperationType.SUBTRACTION, a, b);
         return handleOperation(request);
     }
 
@@ -126,7 +129,8 @@ public class CalculatorRestController {
 
         log.info("Received request: /multiplication with a={}, b={}", a, b);
 
-        CalculatorRequest request = new CalculatorRequest(OperationType.MULTIPLICATION, a, b);
+        String requestId = MDC.get("requestId");
+        CalculatorRequest request = new CalculatorRequest(requestId, OperationType.MULTIPLICATION, a, b);
         return handleOperation(request);
     }
 
@@ -159,7 +163,8 @@ public class CalculatorRestController {
 
         log.info("Received request: /division with a={}, b={}", a, b);
 
-        CalculatorRequest request = new CalculatorRequest(OperationType.DIVISION, a, b);
+        String requestId = MDC.get("requestId");
+        CalculatorRequest request = new CalculatorRequest(requestId, OperationType.DIVISION, a, b);
         return handleOperation(request);
     }
 

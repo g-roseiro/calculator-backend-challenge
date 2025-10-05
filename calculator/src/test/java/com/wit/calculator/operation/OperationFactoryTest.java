@@ -14,9 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OperationFactoryTest {
 
+    private static final String REQUEST_ID = "test-request-id";
+
     @Test
     void divisionOperation() {
         CalculatorRequest request = new CalculatorRequest(
+                REQUEST_ID,
                 OperationType.DIVISION,
                 new BigDecimal("2"),
                 new BigDecimal("3")
@@ -31,6 +34,7 @@ public class OperationFactoryTest {
     @Test
     void multiplicationOperation() {
         CalculatorRequest request = new CalculatorRequest(
+                REQUEST_ID,
                 OperationType.MULTIPLICATION,
                 new BigDecimal("2"),
                 new BigDecimal("3")
@@ -45,6 +49,7 @@ public class OperationFactoryTest {
     @Test
     void sumOperation() {
         CalculatorRequest request = new CalculatorRequest(
+                REQUEST_ID,
                 OperationType.SUM,
                 new BigDecimal("2"),
                 new BigDecimal("3")
@@ -59,6 +64,7 @@ public class OperationFactoryTest {
     @Test
     void subtractionOperation() {
         CalculatorRequest request = new CalculatorRequest(
+                REQUEST_ID,
                 OperationType.SUBTRACTION,
                 new BigDecimal("2"),
                 new BigDecimal("3")

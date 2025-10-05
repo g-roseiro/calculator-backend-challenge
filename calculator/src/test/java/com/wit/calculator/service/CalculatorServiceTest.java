@@ -20,6 +20,8 @@ public class CalculatorServiceTest {
     private IOperation operationMock;
     private CalculatorService calculatorService;
 
+    private static final String REQUEST_ID = "test-request-id";
+
     @BeforeEach
     void setUp() {
         // create mocks
@@ -32,6 +34,7 @@ public class CalculatorServiceTest {
     @Test
     void calculatorExpectedResponse() {
         CalculatorRequest request = new CalculatorRequest(
+                REQUEST_ID,
                 OperationType.SUM,
                 new BigDecimal("2"),
                 new BigDecimal("3")
@@ -56,6 +59,7 @@ public class CalculatorServiceTest {
     @Test
     void calculatorHandlesDivisionByZero() {
         CalculatorRequest request = new CalculatorRequest(
+                REQUEST_ID,
                 OperationType.DIVISION,
                 new BigDecimal("2"),
                 BigDecimal.ZERO
