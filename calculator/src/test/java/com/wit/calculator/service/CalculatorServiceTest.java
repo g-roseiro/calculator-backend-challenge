@@ -54,7 +54,7 @@ public class CalculatorServiceTest {
     }
 
     @Test
-    void calculatorExceptionDivisionByZeroResponse() {
+    void calculatorHandlesDivisionByZero() {
         CalculatorRequest request = new CalculatorRequest(
                 OperationType.DIVISION,
                 new BigDecimal("2"),
@@ -64,7 +64,10 @@ public class CalculatorServiceTest {
         when(operationFactoryMock.createOperation(request)).thenReturn(operationMock);
         when(operationMock.solve()).thenThrow(new ArithmeticException("Division by Zero not allowed."));
 
-        assertThrows(ArithmeticException.class, () -> calculatorService.calculate(request));
+        CalculatorResponse response = calculatorService.calculate(request);
+
+        assertNull(response.getResult());
+        assertEquals("Division by Zero not allowed.", response.getError());
 
         verify(operationFactoryMock, times(1)).createOperation(request);
         verify(operationMock, times(1)).solve();
