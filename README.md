@@ -16,6 +16,7 @@
 
    Make sure Docker Desktop is running before executing this command.
 
+
 3. **Access the REST API documentation**
 
     - Open [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
@@ -47,20 +48,52 @@ The system is divided into three independent modules, connected through Apache K
 
 ---
 
-## Request Flow
+### Request Flow
 
-1. The REST module receives a request such as:
-   ```
-   GET /sum?a=2&b=3
-   ```
-2. It builds a `CalculatorRequest` and sends it to the Kafka topic `calculator-requests`.
-3. The Calculator module consumes the request, creates the correct operation (SUM, SUBTRACTION, etc.) using the `OperationFactory`, and computes the result.
-4. The result is sent back through the `calculator-responses` Kafka topic.
-5. The REST module listens to this topic and returns the response as JSON to the HTTP client.
+1. **REST receives the HTTP request**  
+   Example: `GET /sum?a=2&b=3`  
+   The filter adds or propagates the `X-Request-ID` header and stores it in the MDC for logging correlation.
 
+
+2. **REST → Kafka (request)**  
+   The REST module builds a `CalculatorRequest` containing:
+    - `operation` (SUM, SUBTRACTION, MULTIPLICATION, DIVISION)
+    - `a` and `b` (`BigDecimal` values)
+    - `requestId` (same value from `X-Request-ID`)  
+      It then sends the request to the Kafka topic **`calculator-requests`**.
+
+
+3. **Calculator consumes and processes**  
+   The Calculator module consumes the message, sets the `requestId` in the MDC, and:
+    - Uses the `OperationFactory` to instantiate the correct operation class.
+    - Calls `solve()` and **builds a `CalculatorResponse`**:
+        - On success: includes `result` (as a string from `toPlainString()`), `error = null`, and `requestId`.
+        - On arithmetic error (e.g., division by zero): does not throw the exception outward; instead returns  
+          `result = null`, `error = "Division by Zero not allowed."`, and `requestId`.
+
+
+4. **Calculator → Kafka (response)**  
+   The `CalculatorResponse` is published to the Kafka topic **`calculator-responses`**.
+
+
+5. **REST consumes the response and returns HTTP**
+    - If the response arrives within the timeout, REST returns **HTTP 200** with:
+        - Header: `X-Request-ID` (same `requestId`)
+        - Body (JSON) = `CalculatorResponse`, for example:
+          ```json
+          { "result": "5", "error": null }
+          ```
+        - If there was a business error (e.g., division by zero):
+          ```json
+          { "result": null, "error": "Division by Zero not allowed." }
+          ```
+    - If no response arrives within the timeout, REST returns **HTTP 504 (Gateway Timeout)**:
+        ```json
+        { "result": null, "error": "No response received from calculator service." }
+        ```
 ---
 
-## Notes
+## End Notes
 
 **Stop all containers**
 ```bash
